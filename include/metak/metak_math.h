@@ -100,14 +100,9 @@ constexpr auto max(T first, T second, Rest... rest) {
     return max(first > second ? first : second, rest...);
 }
 
-template <typename T>
-constexpr auto sum(T first) {
-    return first;
-}
-
-template <typename T, typename... Rest>
-constexpr auto sum(T first, Rest... rest) {
-    return first + sum(rest...);
+template <typename... Values>
+constexpr auto sum(Values... values) {
+    return (0 + ... + values);
 }
 
 template <typename T>
@@ -120,14 +115,9 @@ constexpr auto sum_of_sqr(T first, Rest... rest) {
     return first * first + sum_of_sqr(rest...);
 }
 
-template <typename T>
-constexpr auto prod(T first) {
-    return first;
-}
-
-template <typename T, typename... Rest>
-constexpr auto prod(T first, Rest... rest) {
-    return first * prod(rest...);
+template <typename... Values>
+constexpr auto prod(Values... values) {
+    return (1 * ... * values);
 }
 
 template <typename... Values>

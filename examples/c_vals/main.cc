@@ -78,6 +78,7 @@ int main() {
         static_assert(a[metak::c_size_t<1>()] == 2);
         static_assert(a[metak::c_size_t<2>()] == 3);
         static_assert(a[metak::c_size_t<3>()] == 4);
+        static_assert(a.index_of<2>() == 1);
     }
     {
         constexpr auto a = metak::c_values_t<int, 1, 2, 3, 4, 5>();
@@ -89,7 +90,7 @@ int main() {
         static_assert(c.front() == a.front());
         static_assert(c.back() == b.back());
         static_assert(c.sum() == a.sum() + b.sum());
-        static_assert(c == metak::make_arithmetic_sequence_t<int, 13, 1, 1>());
+        static_assert(c == metak::make_arithmetic_sequence<int, 13, 1, 1>());
     }
     {
         constexpr auto a = metak::c_values_t<int, 4, 5, 6, 7, 8>()
@@ -102,10 +103,10 @@ int main() {
                                .append<12>()
                                .append<13>();
 
-        static_assert(a == metak::make_arithmetic_sequence_t<int, 13, 1, 1>());
+        static_assert(a == metak::make_arithmetic_sequence<int, 13, 1, 1>());
     }
     {
-        constexpr auto seq = metak::make_geometric_sequence_t<metak::u64, 4, 5, 3>();
+        constexpr auto seq = metak::make_geometric_sequence<metak::u64, 4, 5, 3>();
         static_assert(seq[metak::c_size_t<0>()] == 5);
         static_assert(seq[metak::c_size_t<1>()] == 15);
         static_assert(seq[metak::c_size_t<2>()] == 45);
@@ -167,7 +168,7 @@ int main() {
         static_assert(seq[metak::c_size_t<9>()] == 100);
     }
     {
-        auto seq = metak::c_values_t<int, 100, 50, 1>().sorted().reversed();
+        constexpr auto seq = metak::c_values_t<int, 100, 50, 1>().sorted().reversed();
         assert(seq.invoke(foo) == 151);
     }
 

@@ -230,6 +230,11 @@ struct c_values_t {
         }
     }
 
+    template <auto v>
+    constexpr static auto index_of() {
+        return index_of_helper<0, v>();
+    }
+
     template <std::size_t to_remove>
     constexpr static auto remove_prefix() {
         return slice<to_remove, size()>();
@@ -305,6 +310,19 @@ private:
         return get_n<index, values...>::value;
     }
 
+    template <std::size_t index, auto v>
+    constexpr static auto index_of_helper() {
+        if constexpr (index == size()) {
+            return max_size();
+        } else {
+            if constexpr (get(c_size_t<index>()) == static_cast<value_type>(v)) {
+                return index;
+            } else {
+                return index_of_helper<index + 1, v>();
+            }
+        }
+    }
+
     template <std::size_t index>
     constexpr static auto reverse_helper() {
         if constexpr (index == 0) {
@@ -346,6 +364,10 @@ private:
             return rfind_helper<index - 1>(seq);
         }
     }
+
+private:
+    constexpr static auto __size{size()};
+    constexpr static auto __offset{std::size_t(0)};
 };
 
 namespace details {
@@ -444,21 +466,21 @@ template <typename T, T... values>
 constexpr static auto make_cvalues = c_values_t<T, values...>();
 
 template <typename T, std::size_t n, T start, T step>
-constexpr static auto make_geometric_sequence_t = details::make_geometric_sequence<T, n, start, step>;
+constexpr static auto make_geometric_sequence = details::make_geometric_sequence<T, n, start, step>;
 
 template <typename T, std::size_t n, T start, T step>
-constexpr static auto make_arithmetic_sequence_t = details::make_arithmetic_sequence<T, n, start, step>;
+constexpr static auto make_arithmetic_sequence = details::make_arithmetic_sequence<T, n, start, step>;
 
 template <typename T, std::size_t n>
-constexpr static auto make_zero_values_t = make_arithmetic_sequence_t<T, n, T{0}, T{0}>;
+constexpr static auto make_zero_values = make_arithmetic_sequence<T, n, T{0}, T{0}>;
 
 template <typename T, std::size_t n>
-constexpr static auto make_ones_values_t = make_arithmetic_sequence_t<T, n, T{1}, T{0}>;
+constexpr static auto make_ones_values = make_arithmetic_sequence<T, n, T{1}, T{0}>;
 
 template <typename T, std::size_t n>
-constexpr auto c_factorial = c_value_t<make_arithmetic_sequence_t<T, n, T{1}, T{1}>().prod()>();
+constexpr auto c_factorial = make_arithmetic_sequence<T, n, T{1}, T{1}>().prod();
 
 template <typename T, std::size_t n>
-constexpr auto make_index_sequence = make_arithmetic_sequence_t<T, n, T{0}, T{1}>;
+constexpr auto make_index_sequence = make_arithmetic_sequence<T, n, T{0}, T{1}>;
 
 }  // namespace metak
